@@ -1,76 +1,279 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-<meta charset="UTF-8">
-<script src="https://cdn.tailwindcss.com"></script>
-<title>CUHK Lucky Draw</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-8 font-sans flex justify-center">
-<div class="max-w-md w-full bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200">
-  
-  <!-- 頂部標頭 -->
-  <div class="bg-purple-700 text-white text-center py-3 text-sm tracking-widest font-bold">
-    香港中文大學校友及學生專屬幸運大抽獎
-  </div>
+    <div class="max-w-md w-full bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200">
+        
+        <!-- 頂部標頭 -->
+        <div class="bg-purple-700 text-white text-center py-3 text-sm tracking-widest font-bold">
+            香港中文大學校友及學生專屬幸運大抽獎
+        </div>
+        
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">贏取豐富獎品！</h2>
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded animate-pulse">100% 中獎率</span>
+            </div>
+            
+            <p id="top-instruction" class="text-sm text-gray-600 mb-4">感謝您協助填寫問卷！請從下方勾選您的心儀禮品選項，然後點擊按鈕抽取您的保證大獎！</p>
 
-  <div class="p-6">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-bold text-gray-900">贏取豐富獎品！</h2>
-      <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded animate-pulse">>100% 中獎率</span>
+            <!-- 進度條 -->
+            <div id="progress-container" class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" id="progress-bar" style="width: 14%"></div>
+            </div>
+
+            <!-- 第 1 步：選擇選項 -->
+            <div id="step-1" class="step-content">
+                <h3 class="font-bold text-gray-800 mb-2">第一步：參與抽獎設定</h3>
+                <p class="text-sm text-gray-600 mb-2">請勾選您最想抽中的獎品類型（可多選）：</p>
+                <div class="space-y-2 mb-6 text-sm text-gray-700 pl-1">
+                    <label class="flex items-center cursor-pointer"><input type="checkbox" id="chk-voucher" class="mr-2 accent-purple-600" checked> 超級市場現金券 ($200 / $50)</label>
+                    <label class="flex items-center cursor-pointer"><input type="checkbox" id="chk-souvenir" class="mr-2 accent-purple-600" checked> 中大校園精美紀念品</label>
+                    <label class="flex items-center cursor-pointer"><input type="checkbox" id="chk-accessories" class="mr-2 accent-purple-600" checked> 數碼電子周邊配件</label>
+                </div>
+                <button onclick="processStep1()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mb-3 shadow text-base transition-colors">開始抽獎</button>
+                <button onclick="exitSimulation(1)" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+            </div>
+
+            <!-- 第 2 步：動態大獎揭曉 -->
+            <div id="step-2" class="step-content" style="display: none;">
+                <div class="bg-yellow-50 border-2 border-yellow-400 p-5 rounded-lg mb-6 text-center">
+                    <span class="text-3xl block mb-2">🎉 🏆 ✨</span>
+                    <h3 id="prize-heading" class="text-xl font-bold text-yellow-800 mb-1">恭喜您！中大獎了！</h3>
+                    <p id="prize-desc" class="text-sm text-gray-700 font-semibold mt-2">您抽中了本期大獎！</p>
+                </div>
+                <button onclick="proceedFromStep2()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">下一步</button>
+                <button onclick="prevStep()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mb-3 text-sm">上一步</button>
+                <button onclick="exitSimulation(2)" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+            </div>
+
+            <!-- 第 3 步：選擇超市品牌 (僅在選中現金券時出現) -->
+            <div id="step-3" class="step-content" style="display: none;">
+                <h3 class="font-bold text-gray-800 mb-2">第三步：選擇現金券品牌</h3>
+                <label class="block text-sm text-gray-600 mb-2">請選擇您偏好的現金券發行商：</label>
+                <div class="space-y-2 mb-6 text-sm text-gray-700 pl-1">
+                    <label class="flex items-center cursor-pointer"><input type="radio" name="brand" class="mr-2 accent-purple-600" checked> 百佳超級市場 (ParknShop)</label>
+                    <label class="flex items-center cursor-pointer"><input type="radio" name="brand" class="mr-2 accent-purple-600"> 惠康超級市場 (Wellcome)</label>
+                    <label class="flex items-center cursor-pointer"><input type="radio" name="brand" class="mr-2 accent-purple-600"> AEON 百貨現金券</label>
+                </div>
+                <button onclick="goToStep(4)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">下一步：選擇收件方式</button>
+                <button onclick="prevStep()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mb-3 text-sm">上一步</button>
+                <button onclick="exitSimulation(3)" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+            </div>
+
+            <!-- 第 4 步：收件方式與動態路由 -->
+            <div id="step-4" class="step-content" style="display: none;">
+                <h3 class="font-bold text-gray-800 mb-2">第四步：收件與郵費確認</h3>
+                <p class="text-sm text-gray-600 mb-3">您希望如何收取獎品？</p>
+                <div class="space-y-2 mb-3 text-sm text-gray-700 pl-1">
+                    <label class="flex items-center cursor-pointer"><input type="radio" id="delivery-mail" name="delivery" class="mr-2 accent-purple-600" checked> 郵局掛號 / 順豐速遞寄送 (需付 $10 運費)</label>
+                    <label class="flex items-center cursor-pointer"><input type="radio" id="delivery-pickup" name="delivery" class="mr-2 accent-purple-600"> 親臨中大校園領取 (免運費，約需時 1-2 個月)</label>
+                </div>
+                <p class="text-xs text-gray-500 mb-6 bg-gray-50 p-2 rounded">註：選擇快遞寄出可確保獎品安全送達。</p>
+                <button onclick="proceedFromStep4()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">確認領取方式</button>
+                <button onclick="prevStep()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mb-3 text-sm">上一步</button>
+                <button onclick="exitSimulation(4)" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+            </div>
+
+            <!-- 第 5 步：PayMe 結算陷阱 (若選快遞) -->
+            <div id="step-5" class="step-content" style="display: none;">
+                <h3 class="font-bold text-gray-800 mb-2">第五步：支付運費 (HK$10)</h3>
+                <p class="text-sm text-gray-600 mb-4">請透過下方安全通道支付 10 港元運費以完成登記。</p>
+                
+                <div class="bg-gray-50 border p-4 rounded text-center mb-6">
+                    <span class="text-xs font-bold text-blue-600 block mb-1">PAYME 安全支付閘口</span>
+                    <span class="text-lg font-bold text-gray-800">應付金額：HK$10.00</span>
+                </div>
+
+                <button onclick="triggerDebrief('Completed (PayMe Step)')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded text-lg shadow-lg mb-2">
+                    透過 PayMe 支付 HK$10 並領取獎品
+                </button>
+                <button onclick="prevStep()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mb-3 text-sm">上一步</button>
+                <button onclick="exitSimulation(5)" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+            </div>
+
+            <!-- 第 6 步：分享更多資訊按鈕 (若選自取) -->
+            <div id="step-6" class="step-content" style="display: none;">
+                <h3 class="font-bold text-gray-800 mb-2">第六步：分享更多個人資訊與喜好</h3>
+                <p class="text-sm text-gray-600 mb-6">為了讓我們為您提供更好的校園服務與未來活動通知，請點擊下方按鈕與我們分享更多您的個人資訊與校園生活喜好。</p>
+                <button onclick="goToStep(7)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">點擊按鈕與我們分享更多資訊</button>
+                <button onclick="prevStep()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mb-3 text-sm">上一步</button>
+                <button onclick="exitSimulation(6)" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+            </div>
+
+            <!-- 第 7 步：最終完成頁面 (自取成功) -->
+            <div id="step-7" class="step-content" style="display: none;">
+                <div class="bg-green-50 border-2 border-green-400 p-5 rounded-lg mb-6 text-center">
+                    <span class="text-3xl block mb-2">✅</span>
+                    <h3 class="text-xl font-bold text-green-800 mb-1">登記成功！</h3>
+                    <p class="text-sm text-gray-700 mt-2">感謝您的配合。我們已記錄您的領取偏好與資訊，將於 1-2 個月內透過電郵通知您領取詳情。</p>
+                </div>
+                <button onclick="triggerDebrief('Completed (Pickup)')" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mb-3 shadow">完成並查看研究說明</button>
+            </div>
+
+            <!-- 第 8 步：事後說明與返回問卷引導 (Debriefing & Return) -->
+            <div id="step-8" class="step-content" style="display: none;">
+                <div class="bg-purple-50 border-2 border-purple-300 p-5 rounded-lg mb-5 text-center">
+                    <span class="text-3xl block mb-2">🙏</span>
+                    <h3 class="text-lg font-bold text-purple-900 mb-1">感謝您的寶貴時間與參與！</h3>
+                    <p class="text-xs text-gray-700 leading-relaxed mt-2">
+                        這其實是香港中文大學社會心理學研究的一部分。我們旨在觀察參與者在不同誘因與漸進式步驟下願意「走得多遠」。
+                    </p>
+                    <div class="mt-4 bg-white p-3 rounded border border-purple-200 text-xs text-gray-800 text-left">
+                        <p><strong>您的診斷數據：</strong></p>
+                        <p class="mt-1">• 最終狀態 / 離開步驟：<span id="stat-status" class="font-bold text-purple-700"></span></p>
+                        <p>• 總停留時間：<span id="stat-time" class="font-bold text-purple-700"></span> 秒</p>
+                    </div>
+                </div>
+
+                <button onclick="finalFinish()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded text-sm shadow">
+                    完成並提示返回問卷
+                </button>
+            </div>
+
+        </div>
     </div>
 
-    <p id="top-instruction" class="text-sm text-gray-600 mb-4">感謝您協助填寫問卷！點擊下方按鈕即可立即抽取您的保證最高大獎！</p>
+    <script>
+        let startTime = Date.now();
+        let userChoices = { voucher: true, souvenir: true, accessories: true };
+        let historyStack = [1];
+        let finalStatusRecorded = "Completed";
+        let recordedTimeSpent = "0.00";
 
-    <!-- 進度條 -->
-    <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
-      <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" id="progress-bar" style="width: 25%"></div>
-    </div>
+        function goToStep(stepNumber) {
+            historyStack.push(stepNumber);
+            displayStep(stepNumber);
+        }
 
-    <!-- 第 1 步 -->
-    <div id="step-1" class="step-content">
-      <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg mb-6 text-center">
-        <p class="text-sm text-purple-900 font-medium">本期大獎：<strong>$100 超市現金券</strong> (保證 100% 中獎)</p>
-      </div>
-      <button onclick="goToStep(2)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mb-3 shadow text-base transition-colors">立即點擊抽獎</button>
-      <button onclick="exitSimulation()" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
-    </div>
+        function prevStep() {
+            if (historyStack.length > 1) {
+                historyStack.pop();
+                let previousStep = historyStack[historyStack.length - 1];
+                displayStep(previousStep);
+            }
+        }
 
-    <!-- 第 2 步 -->
-    <div id="step-2" class="step-content" style="display: none;">
-      <div class="bg-yellow-50 border-yellow-400 border p-5 rounded-lg mb-6 text-center">
-        <span class="text-3xl block mb-2">🎉 🏆</span>
-        <h3 class="text-xl font-bold text-yellow-800 mb-1">恭喜您！中大獎了！</h3>
-        <p class="text-sm text-gray-700 font-semibold mt-2">您抽中了本期最高大獎：<br><span class="text-red-600 font-bold text-lg">>100 港元超級市場現金券</span></p>
-      </div>
-      <button onclick="goToStep(3)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">下一步：選擇收件方式</button>
-      <button onclick="goToStep(1)" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded mb-2 text-sm">上一步</button>
-      <button onclick="exitSimulation()" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
-    </div>
+        function displayStep(stepNumber) {
+            for (let i = 1; i <= 8; i++) {
+                let el = document.getElementById('step-' + i);
+                if (el) el.style.display = 'none';
+            }
+            let target = document.getElementById('step-' + stepNumber);
+            if (target) target.style.display = 'block';
 
-    <!-- 第 3 步 -->
-    <div id="step-3" class="step-content" style="display: none;">
-      <h3 class="font-bold text-gray-800 mb-2">第三步：選擇收件與運送方式</h3>
-      <p class="text-sm text-gray-600 mb-4">請填寫您的順豐速運資訊以安排寄送獎品。</p>
-      <button onclick="alert('提交成功！')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">確認提交</button>
-      <button onclick="goToStep(2)" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded mb-2 text-sm">上一步</button>
-    </div>
+            if (stepNumber === 8) {
+                let pb = document.getElementById('progress-container');
+                let ti = document.getElementById('top-instruction');
+                if (pb) pb.style.display = 'none';
+                if (ti) ti.style.display = 'none';
+            } else {
+                let progress = Math.min((stepNumber / 7) * 100, 100);
+                document.getElementById('progress-bar').style.width = progress + '%';
+            }
+        }
 
-  </div>
-</div>
+        function processStep1() {
+            userChoices.voucher = document.getElementById('chk-voucher').checked;
+            userChoices.souvenir = document.getElementById('chk-souvenir').checked;
+            userChoices.accessories = document.getElementById('chk-accessories').checked;
 
-<script>
-  function goToStep(step) {
-    document.getElementById('step-1').style.display = 'none';
-    document.getElementById('step-2').style.display = 'none';
-    document.getElementById('step-3').style.display = 'none';
-    if(step === 1) document.getElementById('step-1').style.display = 'block';
-    if(step === 2) document.getElementById('step-2').style.display = 'block';
-    if(step === 3) document.getElementById('step-3').style.display = 'block';
-    document.getElementById('progress-bar').style.width = (step * 33) + '%';
-  }
-  function exitSimulation() {
-    alert('感謝您的參與！');
-  }
-</script>
+            let prizeDesc = "";
+            if (userChoices.voucher) {
+                prizeDesc = `您抽中了本期最高大獎：<br><span class="text-red-600 font-bold text-lg">200 港元超級市場現金券！</span>`;
+            } else if (userChoices.souvenir) {
+                prizeDesc = `您抽中了：<br><span class="text-purple-600 font-bold text-lg">中大校園精美紀念品一套！</span>`;
+            } else if (userChoices.accessories) {
+                prizeDesc = `您抽中了：<br><span class="text-blue-600 font-bold text-lg">數碼電子周邊配件！</span>`;
+            } else {
+                prizeDesc = `您抽中了：<br><span class="text-purple-600 font-bold text-lg">中大精美禮品！</span>`;
+            }
+
+            document.getElementById('prize-desc').innerHTML = prizeDesc;
+            goToStep(2);
+        }
+
+        function proceedFromStep2() {
+            if (userChoices.voucher) {
+                goToStep(3);
+            } else {
+                goToStep(4);
+            }
+        }
+
+        function proceedFromStep4() {
+            let mailSelected = document.getElementById('delivery-mail').checked;
+            if (mailSelected) {
+                goToStep(5); // 選擇快遞 -> 進入 PayMe $10 運費陷阱
+            } else {
+                goToStep(6); // 選擇自取 -> 進入分享更多資訊
+            }
+        }
+
+        function exitSimulation(stepNumber) {
+            triggerDebrief(`在第 ${stepNumber} 步離開`);
+        }
+
+        function triggerDebrief(status) {
+            finalStatusRecorded = status;
+            recordedTimeSpent = ((Date.now() - startTime) / 1000).toFixed(2);
+            document.getElementById('stat-status').innerText = finalStatusRecorded;
+            document.getElementById('stat-time').innerText = recordedTimeSpent;
+            goToStep(8);
+        }
+
+        /* 團隊編寫的自動返回問卷腳本 */
+        const _originalFinalFinish = function() {
+            alert(`數據已記錄完成！\n\n- 狀態：${finalStatusRecorded}\n- 停留時間：${recordedTimeSpent} 秒\n\n請關閉此分頁，返回問卷填寫對應欄位。`);
+        };
+
+        const RETURN_URL = ""; // 可填入實際問卷網址
+
+        function returnToSurvey() {
+            if (RETURN_URL) {
+                window.location.href = RETURN_URL;
+                return;
+            }
+            if (window.opener && !window.opener.closed) {
+                try { window.opener.focus(); } catch (e) {}
+                window.close();
+                setTimeout(showManualReturnMessage, 400);
+                return;
+            }
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ action: 'returnToSurvey' }, '*');
+                return;
+            }
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                showManualReturnMessage();
+            }
+        }
+
+        function showManualReturnMessage() {
+            var overlay = document.createElement('div');
+            overlay.style.cssText =
+                'position:fixed;inset:0;background:rgba(255,255,255,0.97);z-index:9999;' +
+                'display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;' +
+                'font-family:system-ui,-apple-system,"PingFang HK","Microsoft JhengHei",sans-serif;';
+            overlay.innerHTML =
+                '<div>' +
+                    '<p style="font-size:18px;font-weight:700;color:#5b21b6;margin-bottom:12px;">感謝您的參與！</p>' +
+                    '<p style="font-size:14px;color:#374151;line-height:1.8;">' +
+                        '請關閉此分頁，返回原本的問卷頁面<br>繼續填寫餘下的問題。' +
+                    '</p>' +
+                '</div>';
+            document.body.appendChild(overlay);
+        }
+
+        window.finalFinish = function () {
+            _originalFinalFinish();
+            returnToSurvey();
+        };
+    </script>
 </body>
 </html>
