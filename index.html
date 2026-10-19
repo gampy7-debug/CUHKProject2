@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<title>CUHK Lucky Draw</title>
+</head>
+<body class="bg-gray-100 p-8 font-sans flex justify-center">
+<div class="max-w-md w-full bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200">
+  
+  <!-- 頂部標頭 -->
+  <div class="bg-purple-700 text-white text-center py-3 text-sm tracking-widest font-bold">
+    香港中文大學校友及學生專屬幸運大抽獎
+  </div>
+
+  <div class="p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text-gray-900">贏取豐富獎品！</h2>
+      <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded animate-pulse">>100% 中獎率</span>
+    </div>
+
+    <p id="top-instruction" class="text-sm text-gray-600 mb-4">感謝您協助填寫問卷！點擊下方按鈕即可立即抽取您的保證最高大獎！</p>
+
+    <!-- 進度條 -->
+    <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+      <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" id="progress-bar" style="width: 25%"></div>
+    </div>
+
+    <!-- 第 1 步 -->
+    <div id="step-1" class="step-content">
+      <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg mb-6 text-center">
+        <p class="text-sm text-purple-900 font-medium">本期大獎：<strong>$100 超市現金券</strong> (保證 100% 中獎)</p>
+      </div>
+      <button onclick="goToStep(2)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mb-3 shadow text-base transition-colors">立即點擊抽獎</button>
+      <button onclick="exitSimulation()" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+    </div>
+
+    <!-- 第 2 步 -->
+    <div id="step-2" class="step-content" style="display: none;">
+      <div class="bg-yellow-50 border-yellow-400 border p-5 rounded-lg mb-6 text-center">
+        <span class="text-3xl block mb-2">🎉 🏆</span>
+        <h3 class="text-xl font-bold text-yellow-800 mb-1">恭喜您！中大獎了！</h3>
+        <p class="text-sm text-gray-700 font-semibold mt-2">您抽中了本期最高大獎：<br><span class="text-red-600 font-bold text-lg">>100 港元超級市場現金券</span></p>
+      </div>
+      <button onclick="goToStep(3)" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">下一步：選擇收件方式</button>
+      <button onclick="goToStep(1)" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded mb-2 text-sm">上一步</button>
+      <button onclick="exitSimulation()" class="w-full text-gray-400 hover:text-gray-600 text-sm underline pb-2">離開網站</button>
+    </div>
+
+    <!-- 第 3 步 -->
+    <div id="step-3" class="step-content" style="display: none;">
+      <h3 class="font-bold text-gray-800 mb-2">第三步：選擇收件與運送方式</h3>
+      <p class="text-sm text-gray-600 mb-4">請填寫您的順豐速運資訊以安排寄送獎品。</p>
+      <button onclick="alert('提交成功！')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-2 shadow">確認提交</button>
+      <button onclick="goToStep(2)" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded mb-2 text-sm">上一步</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function goToStep(step) {
+    document.getElementById('step-1').style.display = 'none';
+    document.getElementById('step-2').style.display = 'none';
+    document.getElementById('step-3').style.display = 'none';
+    if(step === 1) document.getElementById('step-1').style.display = 'block';
+    if(step === 2) document.getElementById('step-2').style.display = 'block';
+    if(step === 3) document.getElementById('step-3').style.display = 'block';
+    document.getElementById('progress-bar').style.width = (step * 33) + '%';
+  }
+  function exitSimulation() {
+    alert('感謝您的參與！');
+  }
+</script>
+</body>
+</html>
